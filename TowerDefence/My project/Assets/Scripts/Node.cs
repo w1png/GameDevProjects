@@ -7,20 +7,18 @@ public class Node : MonoBehaviour
 {
     public Color hoverColor;
     private Color materialColor;
-
-    private GameObject building;
     public Vector3 positionOffset;
     public TextMeshProUGUI errorText;
 
+    private GameObject currentBuilding;
     private Renderer rendererComponent;
+    private UIManager uiManager;
 
     private void Start()
     {
-        errorText = GameObject.Find("ErrorText").GetComponent<TextMeshProUGUI>();
-        errorText.CrossFadeAlpha(0f, 0f, true);
-
         rendererComponent = GetComponent<Renderer>();
         materialColor = rendererComponent.material.color;
+        uiManager = UIManager.instance;
     }
 
     private void OnMouseOver()
@@ -29,36 +27,32 @@ public class Node : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            if (building == null)
+            if (currentBuilding == null)
             {
-                StartCoroutine(DrawError("There is no building on this node!"));
+                uiManager.errorText = "There is no building on this node!";
                 return;
             }
-            Destroy(building);
+            Destroy(currentBuilding);
             return;
         }
 
-        if (building != null)
+        if (currentBuilding != null)
         {
-            StartCoroutine(DrawError("This node is already occupied!"));
+            uiManager.errorText = "This node is already occupied!";
             return;
         }
 
-        GameObject turretToBuild = BuildManager.instance.GetTurretToBuild();
-        building = Instantiate(turretToBuild, transform.position + positionOffset, transform.rotation) as GameObject;
-        return;
+        GameObject buildingToBuild = BuildManager.instance.GetBuildingToBuild();
+        if (buildingToBuild == null)
+        {
+            uiManager.errorText = "No building selected!";
+            return;
+        }
 
+        currentBuilding = Instantiate(buildingToBuild, transform.position + positionOffset, transform.rotation) as GameObject;
+        BuildManager.instance.SetBuildingToBuild(null);
     }
-
-
-    IEnumerator DrawError(string error)
-    {
-        errorText.text = error;
-        errorText.CrossFadeAlpha(1f, 0.3f, true);
-        yield return new WaitForSeconds(0.6f);
-        errorText.CrossFadeAlpha(0f, 0.3f, true);
-    }
-
+    
     void OnMouseEnter()
     {
         rendererComponent.material.color = hoverColor;

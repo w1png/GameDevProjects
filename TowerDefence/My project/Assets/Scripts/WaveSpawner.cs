@@ -5,21 +5,25 @@ using TMPro;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public TextMeshProUGUI waveText;
-    public TextMeshProUGUI timeToNextWave;
-
     public Transform enemyPrefab;
     public Transform spawnPoint;
-    public float waitBetweenSpawn = 0.5f;
+    public float waitBetweenSpawn = 1f;
 
     public float timeBetweenWaves = 5f;
     private float countdown = 2f;
-
     private int waveIndex = 0;
+
+    private UIManager uiManager;
+    private void Start()
+    {
+        uiManager = UIManager.instance;
+    }
+
 
     void Update()
     {
-        UpdateUI();
+        uiManager.waveCounter = waveIndex;
+        uiManager.waveCountdown = countdown;
 
         if (countdown <= 0f)
         {
@@ -40,15 +44,9 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    void UpdateUI()
-    {
-        waveText.text = "Wave: " + waveIndex.ToString();
+    
 
-        float countdown_floored = Mathf.Floor(countdown);
-        string countdown_text = countdown_floored == 0f ? "Now" : countdown_floored.ToString() + "s";
-        timeToNextWave.text = "Next wave in: " + countdown_text;
-    }
-
+    
     void SpawnEnemy()
     {
         Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
