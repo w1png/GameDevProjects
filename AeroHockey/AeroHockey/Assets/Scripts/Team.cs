@@ -28,8 +28,9 @@ public static class Extentions
 public class Team
 {
     public string Name;
-    private static int _Lives;
+    private int _Lives;
     public TextMeshProUGUI LivesTextComponent;
+
     public int Lives
     {
         get => _Lives;

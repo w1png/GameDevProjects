@@ -9,10 +9,7 @@ public class ComboGoal : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision");
-        if (collision.transform.tag == "pluck")
-        {
-            PlayerManager.TeamScored(teamEnum);
-        }
+        if (collision.transform.CompareTag("pluck"))
+           PlayerManager.TeamLost(teamEnum);
     }
 }

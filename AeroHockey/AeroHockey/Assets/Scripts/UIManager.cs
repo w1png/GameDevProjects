@@ -18,10 +18,8 @@ public class UIManager : MonoBehaviour
     }
 
 
-    //[Header("Text GUI")]
-    [SerializeField]
+    [Header("Text GUI")]
     public TextMeshProUGUI blueLivesComponent;
-    [SerializeField]
     public TextMeshProUGUI redLivesComponent;
 
     private string FormatLives(int lives)
@@ -38,7 +36,4 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log(team.ToString());
     }
-
-
-
 }

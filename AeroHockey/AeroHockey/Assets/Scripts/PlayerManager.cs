@@ -4,14 +4,39 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    [Header("Game settings")]
+    [SerializeField]
     public int startLives;
+
     public static Team BlueTeam;
     public static Team RedTeam;
 
-    void Awake()
+    [Header("Game objects")]
+    // Pluck
+    [SerializeField]
+    private GameObject Pluck;
+    [SerializeField]
+    private Rigidbody PluckRigidBody;
+    [SerializeField]
+    private GameObject PluckSpawnPoint;
+    
+    // Blue stick
+    [SerializeField]
+    private GameObject BlueStick;
+    [SerializeField]
+    private GameObject BlueStickSpawnPoint;
+
+    // Red stick
+    [SerializeField]
+    private GameObject RedStick;
+    [SerializeField]
+    private GameObject RedStickSpawnPoint;
+
+    private static bool needReset;
+
+    void Start()
     {
         BlueTeam = new Team("Blue", startLives, UIManager.instance.blueLivesComponent);
-        Debug.Log(BlueTeam.Name);
         RedTeam = new Team("Red", startLives, UIManager.instance.redLivesComponent);
     }
 
@@ -20,17 +45,32 @@ public class PlayerManager : MonoBehaviour
         if (BlueTeam.Lives == 0)
         {
             UIManager.instance.SetGameOver(TeamEnum.RED);
-            return;
         }
         else if (RedTeam.Lives == 0)
         {
             UIManager.instance.SetGameOver(TeamEnum.BLUE);
         }
+
+        if (needReset)
+        {
+            ResetField();
+            needReset = false;
+        }
     }
 
-    public static void TeamScored(TeamEnum scoringTeam)
+    private void ResetField()
     {
-        Team team = scoringTeam.GetTeam();
-        Debug.Log(team.Name + " scored!");
+        Pluck.transform.position = PluckSpawnPoint.transform.position;
+        PluckRigidBody.velocity = Vector3.zero;
+
+        BlueStick.transform.position = BlueStickSpawnPoint.transform.position;
+        RedStick.transform.position = RedStickSpawnPoint.transform.position;
+    }
+
+    public static void TeamLost(TeamEnum losingTeam)
+    {
+        Debug.Log(losingTeam.GetTeam().Name);
+        losingTeam.GetTeam().Lives--;
+        needReset = true;
     }
 }
